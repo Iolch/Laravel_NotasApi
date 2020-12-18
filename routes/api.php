@@ -19,3 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::get('genius/annotation/{token}', [GeniusApiController::class, 'annotations']);
+Route::get('genius/search/{token}', [GeniusApiController::class, 'search']);
