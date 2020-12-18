@@ -18,4 +18,4 @@ use App\Http\Controllers\GeniusApiController;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('/', [GeniusApiController::class, 'annotations']);
+Route::get('genius/annotation/{token}', [GeniusApiController::class, 'annotations']);

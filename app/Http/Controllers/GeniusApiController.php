@@ -8,9 +8,10 @@ use Illuminate\Support\Facades\Http;
 
 class GeniusApiController extends Controller
 {
-    public function annotations(){
-        
-        $response = Http::withToken('e4e2vC2wgrlR6XAJC0-rURO4h3QAB7iNj0CaoqE7VoAtheQukpdtbThUe7CWH2cI')->get('https://api.genius.com/annotations/10225840');
-        dd($response->json());
+    private $genius_url = 'https://api.genius.com/' ;
+    public function annotations($token){
+        $response = Http::withToken(env('GENIUS_ACCESS_TOKEN'))
+                    ->get("{$this->genius_url}annotations/{$token}");
+        return $response->json();
     }
 }
