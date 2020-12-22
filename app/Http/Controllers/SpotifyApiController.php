@@ -37,10 +37,10 @@ class SpotifyApiController extends Controller
         $stored_state = $request->cookie($this->state_key);
         
         if($state === null || $state !== $stored_state){
-            dd('ahn');
+            dd($request->json());
         }else{
-            // $request->forget($this->state_key);
-            
+            \Cookie::queue(\Cookie::forget($this->state_key));
+
             $response = Http::asForm()->withBasicAuth(env('SPOTIFY_CLIENT_ID'), env('SPOTIFY_CLIENT_SECRET'))
                         ->post("{$this->spotify_url}api/token",[
                             'code' => $code,
@@ -48,8 +48,17 @@ class SpotifyApiController extends Controller
                             'grant_type' => 'authorization_code'
                             
                         ]);
-                        
-            dd($response->json());
+            if(!array_key_exists('error', $response->json())){
+                $data = array(
+                    'access_token' => $response->json()['access_token'],
+                    'refresh_token' => $response->json()['refresh_token']
+                );
+
+                $url = env('SITE_URL').http_build_query($data);
+                return Redirect::to($url)->withCookie(cookie($this->state_key, $state));
+            }else{
+                dd($response->json());
+            }
         }
     }
 }
