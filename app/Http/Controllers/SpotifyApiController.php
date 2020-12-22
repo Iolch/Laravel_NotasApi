@@ -32,15 +32,24 @@ class SpotifyApiController extends Controller
     }
     public function callback(Request $request){
         
-        dd("iai");
         $code = $request->code;
         $state = $request->state;
         $stored_state = $request->cookie($this->state_key);
-        dd($state);
+        
         if($state === null || $state !== $stored_state){
-
+            dd('ahn');
         }else{
-
+            // $request->forget($this->state_key);
+            
+            $response = Http::asForm()->withBasicAuth(env('SPOTIFY_CLIENT_ID'), env('SPOTIFY_CLIENT_SECRET'))
+                        ->post("{$this->spotify_url}api/token",[
+                            'code' => $code,
+                            'redirect_uri' => env('SPOTIFY_REDIRECT_URL'),
+                            'grant_type' => 'authorization_code'
+                            
+                        ]);
+                        
+            dd($response->json());
         }
     }
 }
