@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\GeniusApiController;
 use App\Http\Controllers\SpotifyApiController;
+use App\Http\Controllers\ImagesController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -23,3 +25,4 @@ Route::get('genius/annotation/{token}', [GeniusApiController::class, 'annotation
 Route::get('genius/search/{token}', [GeniusApiController::class, 'search']);
 Route::get('spotify/login', [SpotifyApiController::class, 'login']);
 Route::get('spotify/callback', [SpotifyApiController::class, 'callback']);
+Route::get('image', [ImagesController::class, 'getRandom']);
