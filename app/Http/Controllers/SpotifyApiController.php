@@ -6,10 +6,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Http;
 
+use App\Models\User;
+use App\Services\UserService;
+
 class SpotifyApiController extends Controller
 {  
     private $spotify_url = 'https://accounts.spotify.com/' ;
     private $state_key = 'spotify_auth_state';
+    private UserService $userService;
+
+    public function __construct()
+    {
+        $this->userService = new UserService();
+    }  
 
     private function generateRandomString($length = 10) {
         return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
@@ -48,10 +57,26 @@ class SpotifyApiController extends Controller
                             'grant_type' => 'authorization_code'
                             
                         ]);
+
+            // Now we need to get user's spotify id to find out our id
+            $user_spotify = Http::withToken($response->json()['access_token'])->get("https://api.spotify.com/v1/me");
+            
+            $user = User::where('spotify_id', $user_spotify->json()['id'])->first();
+            if(!$user){
+                try {
+                    $user = $this->userService->save(['spotify_id' => $user_spotify->json()['id']]);
+                } catch (ValidationException $e) {
+                    dd($e->validator->getMessageBag());
+                }
+            }
+
+            // Now we need to return everything to our front end
+            
             if(!array_key_exists('error', $response->json())){
                 $data = array(
                     'access_token' => $response->json()['access_token'],
-                    'refresh_token' => $response->json()['refresh_token']
+                    'refresh_token' => $response->json()['refresh_token'],
+                    'user_id' => $user->id
                 );
 
                 $url = env('SITE_URL').http_build_query($data);
