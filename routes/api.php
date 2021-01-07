@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GeniusApiController;
 use App\Http\Controllers\SpotifyApiController;
 use App\Http\Controllers\ImagesController;
+use App\Http\Controllers\ForumsController;
+use App\Http\Controllers\PostsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,3 +28,6 @@ Route::get('genius/search/{token}', [GeniusApiController::class, 'search']);
 Route::get('spotify/login', [SpotifyApiController::class, 'login']);
 Route::get('spotify/callback', [SpotifyApiController::class, 'callback']);
 Route::get('image', [ImagesController::class, 'getRandom']);
+
+Route::resource('forum', ForumsController::class)->except(['create', 'edit']);
+Route::resource('post', PostsController::class)->except(['create', 'edit']);

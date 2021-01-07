@@ -11,7 +11,7 @@ class Forum extends Model
     use HasFactory,SoftDeletes;
     
     protected $fillable = [
-        'user_id', 'description'
+        'user_id', 'description', 'title'
     ];
 
     public function creator(){

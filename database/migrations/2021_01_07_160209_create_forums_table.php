@@ -16,7 +16,8 @@ class CreateForumsTable extends Migration
         Schema::create('forums', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');
-            $table->string('description');
+            $table->string('title');
+            $table->string('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
