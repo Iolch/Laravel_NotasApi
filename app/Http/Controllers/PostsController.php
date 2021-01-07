@@ -4,8 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Models\Post;
+use App\Services\PostService;
+
 class PostsController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->postService = new PostService();
+    }  
+
     /**
      * Display a listing of the resource.
      *
@@ -13,17 +22,7 @@ class PostsController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return Post::all();
     }
 
     /**
@@ -34,7 +33,12 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $post = $this->postService->save($request->all());
+            return $post;
+        } catch (ValidationException $e) {
+            dd($e->validator->getMessageBag());
+        }
     }
 
     /**
@@ -43,21 +47,11 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Post $post)
     {
-        //
+        return $post;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -66,9 +60,14 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Post $post)
     {
-        //
+        try {
+            $updated = $this->postService->update($request->all(), $post);
+            return ['updated' => $updated];
+        } catch (ValidationException $e) {
+            dd($e->validator->getMessageBag());
+        }
     }
 
     /**
@@ -77,8 +76,13 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        //
+        try {
+            $deleted = $this->postService->delete($post);
+            return ['deleted' => $deleted];
+        } catch (ValidationException $e) {
+            dd($e->validator->getMessageBag());
+        }
     }
 }
