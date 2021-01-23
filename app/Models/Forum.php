@@ -6,25 +6,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class User extends Model
+class Forum extends Model
 {
-    use SoftDeletes, HasFactory;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    use HasFactory,SoftDeletes;
+    
     protected $fillable = [
-        'spotify_id'
+        'user_id', 'description', 'title'
     ];
 
-    public function forums(){
-        return $this->hasMany(Forum::class);
+    public function creator(){
+        return $this->belongsTo(User::class);
     }
 
     public function posts(){
         return $this->hasMany(Post::class);
     }
+
 
 }
